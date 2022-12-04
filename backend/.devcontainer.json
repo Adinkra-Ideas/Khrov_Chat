@@ -1,0 +1,26 @@
+// https://code.visualstudio.com/remote/advancedcontainers/connect-multiple-containers
+{
+  "name": "Nest",
+  "dockerComposeFile": ["../docker-compose-dev.yml"],
+  "service": "backend",
+  "shutdownAction": "none", // leave the container running when VS Code closes
+  "containerUser": "node",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Prisma.prisma",
+        "mhutchie.git-graph",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "Orta.vscode-jest",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "files.autoSave": "onFocusChange"
+      }
+    }
+  },
+  "postCreateCommand": "sudo chown -R node /workspace/backend/dist",
+  "postStartCommand": "npx prisma migrate reset -y",
+  "workspaceFolder": "/workspace/backend"
+}
