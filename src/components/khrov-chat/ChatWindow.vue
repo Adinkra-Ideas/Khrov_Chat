@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import ChatList from '@/components/khrov-chat/ChatList.vue';
 
   // ******************************************************************
   // we had to pick classNames from within a specific parent element  *
@@ -41,7 +42,7 @@
     </div> 
     <div id="Output-boxes">
       <div class="active Chats-tab Output-box">
-        chat
+        <ChatList />
       </div>
       <div class="Chatinv-tab Output-box">
         chat invite
@@ -121,6 +122,15 @@
   top: 0;
   left: 0;
   border-radius: 10px;
+  overflow-y: scroll;
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.Output-box::-webkit-scrollbar {
+  display: none;
 }
 
 .Output-box.active {
