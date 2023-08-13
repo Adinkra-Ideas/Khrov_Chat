@@ -1,7 +1,11 @@
 # Khrov Chat App
-Test Community App Boilerplate for my upcoming Social Media Platform currently in its development Phase.
-
+Test version of the App Boilerplate for my upcoming Social Media Platform currently in its development Phase.
 Live preview will be made available for testing and feedback on my website https://khrov.com in due time
+
+# Quick Quote
+```bash
+As an adept of the Chosen Few that God has revealed the One Substance, I abide by the Alchemists' pledge to not change Lead into Gold, but rather to do good works with my Gift.
+```
 
 # Legals
 This App is provided as is with no Guarantee whatsoever. Cloning, testing or whatever you chose to do with it is at your own risk. I will not be held liable for any damages, losses or misfortune that may arise due to your usage. By cloning from this Github repo, you are agreeing to the aforementioned Terms.
@@ -28,16 +32,19 @@ $ make fclean
 
 5. run the setup with the Makefile command
 ```bash
-make up
+$ make up
 ```
 
 6. Three Docker containers will be created. Adminer, Nestjs and Postgres. Ignore those if you dont know what they mean because a lot of stuffs have been automated to run both at the build and runtime stages of each Container. Upon startup, the Database will be populated with test users but you must wait for about a minute for the Nestjs underlying server to be fully ready, then open your browser and visit localhost:3000
 
 Hint: Depending on whether these Ports were currently in use, you might have to wait for up to 5 mins for them to become available again for use.
 
-Hint: If the webpage is not available and your browser console shows error "crbug/1173575, non-JS module files deprecated.", It simply means the Nestjs service is not yet fully up. Depending on your Machine's ability, it might take up to 3 minutes
+Hint: If the webpage is not available and your browser console shows error 
+```bash
+"crbug/1173575, non-JS module files deprecated.", It simply means the Nestjs service is not yet fully up. Depending on your Machine's ability, it might take up to 3 minutes
+```
 
-8. I removed the 0Auth part of the App, meaning the current version is not behind any Session. But a 'fake Session' was mimicked for the test. At the bottom right of the loaded webpage on your Browser'S screen, enter any of the existing userId from the 10 users currently in your 'User' table of Postgres, so you can use the chat as if you were that User. Yes, you can do this on multiple tabs with different userIds simultaneously. To start a new chat, simply open the chat interface and under the 'Chat Invite' tab, you can search for users by their name, userName or displayName in the 'User' table of the Postgres Db.
+7. I removed the 0Auth part of the App, meaning the current version is not behind any Session. But a 'fake Session' was mimicked for the test. At the bottom right of the loaded webpage on your Browser'S screen, enter any of the existing userId from the 10 users currently in your 'User' table of Postgres, so you can use the chat as if you were that User. Yes, you can do this on multiple tabs with different userIds simultaneously. To start a new chat, simply open the chat interface and under the 'Chat Invite' tab, you can search for users by their name, userName or displayName in the 'User' table of the Postgres Db.
 
 Hint: Adminer container. The logins for the DB are in the .env file.
 
