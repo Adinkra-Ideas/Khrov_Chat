@@ -1,0 +1,9 @@
+# Bootstrap POSTGRES
+POSTGRES_DB=postgre
+POSTGRES_USER=postgre
+POSTGRES_PASSWORD=postgre
+# Project DB + DB User Details
+PROJECT_DB=extraDb
+PROJECT_DB_USER=extraUser
+PROJECT_DB_USER_PASS=extraUser
+DATABASE_URL="postgresql://postgre:postgre@postgre:5432/khrovChatDb?schema=public"

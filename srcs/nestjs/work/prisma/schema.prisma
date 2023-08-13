@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Main table where new User Registration details are stored
+model User {
+  id                 Int                @default(autoincrement()) @id
+  userName           String             @db.VarChar(32) @unique
+  displayName        String?            @db.VarChar(32) @unique
+  password           String             @db.VarChar(128)
+  activated2FA       Boolean            @default(false)
+  email              String?            @db.VarChar(64) @default("")
+  name               String?            @db.VarChar(64)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  profile_pics       Profile_pic[]
+  chat_union1        Chat_union[]       @relation("Client1")
+  chat_union2        Chat_union[]       @relation("Client2")
+}
+
+// Child of User Table used for storing user profile pics 1to1
+model Profile_pic {
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId       Int        @id
+  avatar       String     @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABcCAMAAADUMSJqAAAAOVBMVEXv7OjGw70AAADCv7ry7+v49fHm49/g3dns6eXMycR4dnTPzMekop9WVVTKx8QYFxcyMjG8ubPY1dHE2mloAAACUklEQVRoge2a25KDIAyGoUbR4qHl/R92Aa21HQmYhJud/jd79zXzb8hhorptmsbZ9Iqt3szj9GKq9c/dtAB8dBBAa+4H+GJbIfLGb+3ygj86UXTEd48VvsizA32JcFuB7ek2wO9tDbZS7d3DTZXAfejmpqZKgfvQJzVWCtyHPqq5HnxWphZbebRAPUnpChpC9QGpEvRBVp2zVmtrXadk+dDZptGbmsYKFgwweidvfC329OwXOuKtBBm6E3TE871JsiXoaXag89g9wvZ01guEAWNrPTCMAYMG7kNnZCRk2J5OhoPLsbV2VDrk2VpT4Vga7r4Q07HEFbIvuTxcRczGfK5EX4imP0vgTxr7Bz9V1X9o0QOlPlGwJWzqdJ8ruNEV6jiIt6ENTm1GJe+f3ovyZZHRo/Ohc5poznVW+weHjxbkJrfSUWM4pkTNafbMI/s1ok/De8VYM6Bzw/dk/mF5MzjaMArKYeD9B7QjbDFFrX+Vuxi2KUcHXRoZzxYV1JwLS0zRwPKpoRBdUmlPgi+qBDR2IZ2GDsqiywbEc+VKTaYM4soVSarhGx21nWNKEGpMyS6Bho60VG7gaOjcwLHQy5YgXOmE4bPTL4mXh6uS2XixiJ8rMZhKWJ40nZ+IQYlkLFtTckqsMXXhEuzkjiQT+Tn7B/8X8L4evD8eRKTh5njKEYbDfDxCScPH4/lMGN5Ox8OfLDwc/g4nS1l4PFm+j62i8PXY+j4TS8JfZ+L9wC0I3w/cPvYhnubF4NAOy/dHBUJt7uujgu1ziKfEUPQ8fA7xB92pGr+J4j6kAAAAAElFTkSuQmCC")
+}
+
+// Table for storing chat union details between two User
+model Chat_union { 
+  unionId                 Int       @default(autoincrement()) @id  
+  unionIdOther            Int        
+  client1                 User      @relation("Client1", fields: [client1Id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  client1Id               Int 
+  client2                 User      @relation("Client2", fields: [client2Id], references: [id], onDelete: Cascade, onUpdate: Cascade)    
+  client2Id               Int
+  blockStatus             Boolean   @default(false)
+  allowedToUnblock        Boolean   @default(false)
+  unreadCount             Int       @default(0)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  chat_historys           Chat_history[]
+}
+
+
+// Table where the chat between two people are stored
+model Chat_history {
+  id                Int                 @default(autoincrement()) @id
+  union             Chat_union          @relation(fields: [unionId], references: [unionId], onDelete: Cascade, onUpdate: Cascade)
+  unionId           Int
+  outgoing          String?
+  incoming          String?
+  time              DateTime            @default(now())
+  deliveryStatus    String              @default("sent") @db.VarChar(16)
+}

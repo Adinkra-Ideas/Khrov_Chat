@@ -1,0 +1,60 @@
+version: '3.1'
+
+volumes:
+    postgre:
+        name: postgre
+        driver: local
+        driver_opts:
+               device: $PWD/postgres/postgre/
+               o: bind
+               type: none
+
+networks:
+    khrovChat:
+        name: khrovChat-net
+
+services:
+
+  postgre:
+    image: postgres:15-alpine3.17
+    container_name: postgre
+    healthcheck:
+      test: ["CMD-SHELL", "ps | grep '1 postgres' || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - $PWD/postgres/postgre/:/var/lib/postgresql/data/
+      - postgre:/var/lib/postgresql/data/
+      - ./postgres/conf/entrypoint.sh:/docker-entrypoint-initdb.d/entrypoint.sh
+    networks:
+      - khrovChat
+    ports:
+      - "5432:5432"
+    restart: always
+    env_file:
+      - ./.env
+
+  admine:
+    image: adminer
+    container_name: admine
+    networks:
+      - khrovChat
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  nestj:
+    build: ./nestjs/
+    image: nestjs:khrovchat
+    container_name: nestj
+    depends_on:
+      postgre:
+        condition: service_healthy
+    networks:
+      - khrovChat
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    env_file:
+      - ./.env

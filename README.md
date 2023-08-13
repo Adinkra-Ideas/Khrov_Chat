@@ -1,68 +1,43 @@
-# work
+# Khrov Chat App
+Test Community App Boilerplate for my social Network Platform currently under development.
+Live preview will be made available on my website https://khrov.com
 
-This template should help get you started developing with Vue 3 in Vite.
+# Colophon
+Author: Daniel Uyi
+Copyrighted content. No part of this code should be used without the Author'S consent.
 
-## Recommended IDE Setup
+# Legals
+This App is provided as is without any guarantee whatsoever. Cloning, testing or whatever you chose to do with it is at your own risk. I will not be held liable for any damages, losses or misfortune that may arise from your usage. By cloning from this Github repo, you are agreeing to the aforementioned terms.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+# Test Procedure (POSIX only), (Requires up-to-date Docker Compose to be installed and working)
+1. Run the following command to clone and set the right PWD 
+  git clone https://github.com/Adinkra-Ideas/khrov-chat.git && cd khrov-chat
+  And in your PWD, rename the file named 'dotenv' to '.env' without the quotes
 
-## Type Support for `.vue` Imports in TS
+2. Free ports 5432, 8080 and 3000 on your local machine by shutting down any Process that is using them
+sudo fuser -k 5432/tcp
+sudo fuser -k 8080/tcp
+sudo fuser -k 3000/tcp
+Hint: Depending on whether this ports are currently in use, you might have to wait for up to 5 mins before the ports will become available again for use.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+3. Ensure all Docker instances are removed by running Makefile command
+make fclean
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+4. run the setup with the Makefile command
+make up
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+5. Three Docker containers will be created. Adminer, Nestjs and Postgres. Ignore those if you dont know what they mean.
+Wait about a minute for the Nestjs underlying server to be ready, then open your browser and visit localhost:3000
 
-## Customize configuration
+6. The chat is not behind any session at the moment. But a 'fake session' was mimicked for testing purpose. At the bottom right of the loaded webpage on your Browser'S screen, enter any of the existing userId from the 10 users currently in your 'User' table of Postgres, so you can use the chat as if you were that user. Yes, you can do this on multiple tabs with different userIds simultaneously. To start a new chat, simply open the chat interface and under the 'chat invite' tab, you can search for any of the existing usernames in the 'User' table of the Postgres Db. Hint: Adminer.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- Supports unlimited chat with realtime delivery status updates, blocking and unblocking(check the 'Blocked' tab to find users you blocked, if you need to unblock them), and a whole lot more.
 
-## Project Setup
+# Chat Todo's
+- Adding the channels/Group chat support
+- Better UI/UX improvements for the frontview
+- Notifications, Date formating, ...
 
-```sh
-npm install
-```
+Collaborators are welcome. More details will be given in due time as this Chat interface is only a small part of a bigger personal project that I am currently working on. 
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
-
-```sh
-npm run test:e2e:dev
-```
-
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
-
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
-
-```sh
-npm run build
-npm run test:e2e
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+The primary tools used are Nestjs, Vue, Prisma, Postgres, Docker(for containerization)
