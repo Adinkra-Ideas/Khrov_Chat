@@ -32,10 +32,13 @@ make up
 ```
 
 6. Three Docker containers will be created. Adminer, Nestjs and Postgres. Ignore those if you dont know what they mean because a lot of stuffs have been automated to run both at the build and runtime stages of each Container. Upon startup, the Database will be populated with test users but you must wait for about a minute for the Nestjs underlying server to be fully ready, then open your browser and visit localhost:3000
+
 Hint: Depending on whether these Ports were currently in use, you might have to wait for up to 5 mins for them to become available again for use.
+
 Hint: If the webpage is not available and your browser console shows error "crbug/1173575, non-JS module files deprecated.", It simply means the Nestjs service is not yet fully up. Depending on your Machine's ability, it might take up to 3 minutes
 
 8. I removed the 0Auth part of the App, meaning the current version is not behind any Session. But a 'fake Session' was mimicked for the test. At the bottom right of the loaded webpage on your Browser'S screen, enter any of the existing userId from the 10 users currently in your 'User' table of Postgres, so you can use the chat as if you were that User. Yes, you can do this on multiple tabs with different userIds simultaneously. To start a new chat, simply open the chat interface and under the 'Chat Invite' tab, you can search for users by their name, userName or displayName in the 'User' table of the Postgres Db.
+
 Hint: Adminer container. The logins for the DB are in the .env file.
 
 - Supports unlimited chat with realtime delivery status updates, blocking and unblocking(check the 'Blocked' tab to find users you blocked, if you need to unblock them), and a whole lot more.
