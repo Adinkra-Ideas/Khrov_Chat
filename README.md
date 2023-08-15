@@ -44,6 +44,7 @@ On successful completion, you should see the following:
 
 Hint: If the webpage says 'ERR_EMPTY_RESPONSE' and your browser console shows error 
 > crbug/1173575, non-JS module files deprecated.
+
 It simply means the Nestjs service is not yet fully up. Depending on your Machine's capability, it might take up to 5 minutes or more. Keep reloading the page.
 
 
