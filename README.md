@@ -20,10 +20,7 @@ sudo fuser -k 3000/tcp
 ```
 Hint: Depending on whether these Ports were currently in use, you might have to wait for up to 5 mins for them to become available again for use.
 
-4. Ensure all Docker instances are removed by running Makefile command
-```bash
-make fclean
-```
+4. Ensure all Docker instances are removed.
 
 5. run the setup with the Makefile command.
 ```bash
