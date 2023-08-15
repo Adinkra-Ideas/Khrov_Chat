@@ -31,9 +31,13 @@ make up
 ```
 On successful completion, you should see the following:
 > ✔ Network khrovChat-net  Created
+> 
 > ✔ Volume "postgre"       Created
+> 
 > ✔ Container admine       Started
+> 
 > ✔ Container postgre      Healthy
+> 
 > ✔ Container nestj        Started 
 
 6. Three Docker containers will be created. Adminer, Nestjs and Postgres. Ignore those if you dont know what they mean. Upon startup, the Database will be populated with test users but you must wait for about a minute for the Nestjs underlying server to be fully ready, then open your browser and visit localhost:3000
