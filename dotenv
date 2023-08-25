@@ -1,0 +1,15 @@
+# Backend
+POSTGRES_DB=postgre
+POSTGRES_USER=postgre
+POSTGRES_PASSWORD=postgre
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
+JWT_ACCESS_SECRET="foobar"
+JWT_ACCESS_EXPIRATION_TIME='300s'
+JWT_REFRESH_SECRET="barfoo"
+JWT_REFRESH_EXPIRATION_TIME='86400s'
+GOOGLE_CLIENT_ID="foobarr"
+FRONTEND_URL="http://localhost:5173"
+# Frontend
+VITE_BACKEND_SERVER_URI="http://localhost:3000"
+VITE_SOCKET_URI="http://localhost:3000"
+
