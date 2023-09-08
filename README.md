@@ -10,8 +10,10 @@ This App is provided as is with no Guarantee whatsoever. Cloning, testing or wha
 ```bash
 git clone https://github.com/Adinkra-Ideas/khrov-chat.git && cd khrov-chat
 ```
-2. In your PWD, rename the file named './srcs/dotenv' to './srcs/.env' without the quotes
-
+2. Run the following command to renamerename the file named './srcs/dotenv' to './srcs/.env' without the quotes
+```bash
+mv ./srcs/dotenv ./srcs/.env
+```
 3. Free ports 5432, 8080 and 3000 on your local machine by shutting down any Process that is using them
 ```bash
 sudo fuser -k 5432/tcp
