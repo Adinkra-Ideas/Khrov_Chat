@@ -1,0 +1,1 @@
+import{_ as e,o as _,c as t}from"./index-a807770e.js";const c={},s={id:"Test_Grey"};function o(n,r){return _(),t("div",s)}const d=e(c,[["render",o],["__scopeId","data-v-b99c4ae6"]]);export{d as default};

@@ -9,7 +9,7 @@
   } >()
 
   const $HOST = inject('$HOST');
-  // Since props.sTemp is of type PropType<number>, we first cast it to 'unknown' then 'number' before assignment
+
   const $: number = props.sTemp as unknown as number;
   const cBlkd: ChatBlocked = reactive({
     cbkKeyBuild: 0,
@@ -17,7 +17,7 @@
   let output: Chat_unionTb[];
 
   const searchBlocked = () => {
-    fetch(`${$HOST}/chat-blocking/${$}`, {
+    fetch(`${$HOST}/chats/blocked/${$}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

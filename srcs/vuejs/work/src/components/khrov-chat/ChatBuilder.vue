@@ -5,7 +5,6 @@
   import type { ChatBuilder } from '@/components/khrov-chat/interface/khrov-chat';
   import { layer } from '@layui/layer-vue';
 
-  // const layer = require('@layui/layer-vue');
   const $HOST = inject('$HOST');
 
   onMounted(() => {
@@ -20,7 +19,7 @@
     const chatIcon = document.getElementById('ChatIcon-container');
 
     if (chatWindow && chatIcon) {
-      // If chat window is open and a click occurred neither in the window or on chat icon
+
       if ( ! chatWindow.contains(e.target as Node) && ! chatIcon.contains(e.target as Node) ) {
         chatWindow.style["display"] = "none";
       }
@@ -43,7 +42,7 @@
       return ;
     }
 
-    fetch(`${$HOST}/chat-connections/${initialTest.cbdUserInput}`, {
+    fetch(`${$HOST}/chats/get/temp/login/${initialTest.cbdUserInput}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -52,7 +51,7 @@
     })
     .then(response => {
       if (!response.ok) {
-        // So we can display error message to client
+
         return response.json();
       }
       else {
@@ -61,7 +60,7 @@
       }
     })
     .then(errorJson => {
-      // For displaying the error message to client if exist
+
       if (errorJson) {
         layer.msg(errorJson.message);
         console.log(errorJson.message);
@@ -142,8 +141,7 @@
   width: 300px;
   height: 500px;
   z-index: 1;
-  /* -webkit-transition: all 0.4s;
-  transition: all 0.4s; */
+
 }
 
 </style>

@@ -48,6 +48,7 @@
 .Preview {
   display: grid;
   grid-template-columns: 1fr 5fr;
+  grid-template-rows: 40px;
 
   width: 100%;
   aspect-ratio: 6 / 1;
@@ -55,7 +56,7 @@
   cursor: pointer;
 }
 .Preview:hover {
-  background-color: rgb(245, 245, 245);
+  background-color: #F5F5DC;
 }
 
 #Avatar {

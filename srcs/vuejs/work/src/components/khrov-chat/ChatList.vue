@@ -3,7 +3,7 @@
   import type { ChatList, ChatListTmp, Chat_unionTb } from '@/components/khrov-chat/interface/khrov-chat'
   import { onMounted, onUnmounted } from 'vue'
   import ChatListItem from '@/components/khrov-chat/ChatListItem.vue'
-  import MessageItem from '@/components/khrov-chat/MessageItem.vue'
+  import ChatListItemMsg from '@/components/khrov-chat/ChatListItemMsg.vue'
   import { layer } from '@layui/layer-vue';
 
   const props =  defineProps< {
@@ -11,7 +11,6 @@
   } >()
 
   const $HOST = inject('$HOST');
-  // const layer = require('@layui/layer-vue');
   const $_: number = props.sTemp;
   const cList: ChatList = reactive({
     chiChatConnsApiOk: 0,
@@ -22,9 +21,8 @@
 
   });
 
-// reactive<object>({});
-  const chatCache: any = reactive({});  // used for caching all unions that has been put under focus
-  const offlineCache: ChatListTmp[] = []; // variable with each element holding a minified copy of each message item that is yet to be uploaded to server. The original full copy is in chatCache
+  const chatCache: any = reactive({});  
+  const offlineCache: ChatListTmp[] = []; 
   let datas: Chat_unionTb[] = [];
 
   const deleteConversation = (unionId: number) => {
@@ -32,7 +30,7 @@
       'unionId': unionId,
     }
 
-    fetch(`${$HOST}/chat-history`, {
+    fetch(`${$HOST}/chats`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -47,10 +45,6 @@
     });
   }
 
-  // **********************************************
-  // if flag true, blocker blocks blocked         *
-  // if flag false, blocker unblocks blocked      *
-  // **********************************************
   const blockUnblock = (blocker: number, blocked: number, partner: string, flag: boolean) => {
     const tmp = {
       'blockerId': blocker,
@@ -58,11 +52,13 @@
     }
     let msg: string = `You have unblocked ${partner} successfully!` ;
 
-    let route: string = `${$HOST}/chat-blocking`;
+    let route: string = `${$HOST}/chats`;
     if (flag === true) {
-      route += '/true';
-      // reconstruct message to remove 'un' from unblock since this is a block request
+      route += '/block/user';
+
       msg = msg.substr(0, 9) + msg.substr(11, msg.length);
+    } else {
+      route += '/block/user/unblock';
     }
     fetch(route, {
       method: 'PUT',
@@ -78,17 +74,15 @@
       }
     });
   }
-  // 2 CONDITIONS FOR SETTING MESSAGE AS READ ARE 
-  // onClick From Chatlists view, onAreaClick in chatpartnerview
+
   const setSeen = (meReceiver: number, theySender: number) => {
-    // ready the object for API endpoint acceptance
+
     const tmp = {
       'meReceiver': meReceiver,
       'theySender': theySender
     }
-    // only set to seen if there is a new message
-    // if (unreadCount) {
-    fetch(`${$HOST}/chat-history/set-seen`, {
+
+    fetch(`${$HOST}/chats/seen`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -98,41 +92,30 @@
     })
   }
 
-  // ****************************************************
-  // Function for submitting chat messages stored in    *
-  // cList.chiChatMsg. Gets called when the user click  *
-  // the send button after typing a chat message        *
-  // *First it adds the message to existing messages    *
-  // in chatCache array of object,                      *
-  // using the unionId connecting thisUser to each      *
-  // recipient as 'key' and the tmp object containing   *
-  // the message properties as new object 'value'.      *
-  // ****************************************************
   const submitChatMsg = () => {
-    // Do nothing if chat content is empty
+
     if (cList.chiChatMsg && cList.chiChatMsg.length == 0) {
       return ;
     }
-    // build new simple object with received message
+
     const tmp: ChatListTmp = {
         'outgoing': cList.chiChatMsg as string,
         'incoming': null,
         'time': new Date().toISOString(),
         'deliveryStatus': 'pending'
       };
-    // first append msg to chatCache as pending
-    // so as to show in message body
+
     chatCache[cList.chiUnionUnderFocus] = [
       tmp, ...chatCache[cList.chiUnionUnderFocus]
     ];
-    // delete the message from input box visible to user
+
     cList.chiChatMsg = '';
-    // now add unionID's of both ends of union to our tmp object
+
     tmp.unionId = cList.chiUnionUnderFocus;
     tmp.unionIdOther = cList.chiUnionIdOther;
-    // push the tmp into offline cache
+
     offlineCache.push(tmp);
-    fetch(`${$HOST}/chat-history`, {
+    fetch(`${$HOST}/chats`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -141,23 +124,17 @@
           body: JSON.stringify(offlineCache),
         })
       .then( (responseMsg) => {
-        // reset offlinecache after the HTTP header response
-        // confirms that the cache has been inserted in upstream
+
         if (responseMsg.ok) {
           offlineCache.length = 0;
         }
       } );
   }
 
-  // *************************************************************************
-  // Functions for fetching a preview of all existing unions(conversations)  *
-  // that this user has. AKA All rows in Chat_union DB Table where           *
-  // this user's ID is in Client1                                            *
-  // *************************************************************************
   const getConversationPreviews = () => {
-    // for fetching conversation previews
-    fetch(`${$HOST}/chat-connections/${$_}`, {
-        method: 'POST',
+
+    fetch(`${$HOST}/chats/${$_}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept':'application/json'
@@ -167,28 +144,17 @@
       if (!response.ok) {
         throw response;
       }
-      return response.json() } ) // is there a json data? (NB: json data could be bad response sent from server)
+      return response.json() } ) 
     .then( (data) => { datas = data; cList.chiChatConnsApiOk+=1; } ) 
     .catch( (error) => { cList.chiChatConnsApiOk = cList.chiChatConnsApiOk ? 1 : 0; } );
-    // cList.chiChatConnsApiOk will become false if the above fetch failed.
-    // cList.chiUnionUnderFocus will be false if the user hasn't clicked on
-    // a specific chat conversation(union) from the chat list.
-    // Thus this block that calls the function to fetch entire chats
-    // of one conversation(cList.chiUnionUnderFocus) messages from server 
-    // wont execute if any of those 2 conditions are false
+
     if (cList.chiChatConnsApiOk && cList.chiUnionUnderFocus){
       getOneConversation();
     }
   }
 
-  // ******************************************************
-  // Child function called from getConversationPreviews() *
-  // It fetches entire chat between this user and the     *
-  // other user tied together with unionId stored in      *
-  // cList.chiUnionUnderFocus                                *
-  // ******************************************************
   const getOneConversation = () => {
-    fetch(`${$HOST}/chat-history/${cList.chiUnionUnderFocus}`, {
+    fetch(`${$HOST}/chats?unionId=${cList.chiUnionUnderFocus}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -201,7 +167,7 @@
       }
       return response.json() } )
     .then( (dataUnion) => { 
-      // only update this user's message cache if newly fetched is diff from old
+
       if (JSON.stringify(chatCache[cList.chiUnionUnderFocus]) != JSON.stringify(dataUnion.chat_historys)) {
         chatCache[cList.chiUnionUnderFocus] = dataUnion.chat_historys;            
       };            
@@ -217,24 +183,6 @@
     clearInterval(intervalId);
   });
 
-
-  // **************************************************
-  // object + function to toggle views of Chats tab   *
-  // children.                                        *
-  // **************************************************
-  // vtofctc means ViewTogglerObjectForChatsTabChildren
-  // Only one of its attribute can be set to true.
-  // The attribute set to true will then activate the 
-  // automatic addittion of 'ClActive' class to its
-  // div container. 'ClActive' class determines the single
-  // child div of 'Chats' tab that will hold the
-  // full view by being set to 'ClActive'.
-  // ClActive is set in the CSS part to be the only div 
-  // among 'Chats' children divs that will be visible
-  // ************************************************
-  // cactc means changeActiveChatsTabChild. It is the function
-  // that gets caled to toggle the value of the vtofctc object
-  // ************************************************
   const vtofctc = reactive({
     ChatsListIsActive: true,
     SingleConversationIsActive: false,
@@ -248,15 +196,13 @@
     vtofctc.TheirProfileIsActive = param === 'Their-profile' ? true : false;
   }
 
-  
-
   const styling = reactive({
-    TopOfChatUlHeight: '0px',       // for togling hamburger menu in top right of chat message display
-    DeleteConvLiDisplay: 'block',   // for setting display options of 'Delete conversation' <li> in options ul of chat message display
-    ConfirmDeleteLiDisplay: 'none', // for setting display options of 'Confirm Delete conversation' <li> in options ul of chat message display
-    DisplayBlockingQuestion: 'block',     // for bringing blocking question panel up or burying it in their profile page
-    DisplayBlockingConfirm: 'none',     // for bringing blocking confirm panel up or burying it in their profile page
-    ProfileUlHeight: '0px',         // for togling hamburger menu in top right of profile page display
+    TopOfChatUlHeight: '0px',       
+    DeleteConvLiDisplay: 'block',   
+    ConfirmDeleteLiDisplay: 'none', 
+    DisplayBlockingQuestion: 'block',     
+    DisplayBlockingConfirm: 'none',     
+    ProfileUlHeight: '0px',         
   });
 
 </script>
@@ -278,11 +224,11 @@
           :incomingMsg="item.chat_historys[0].incoming"
           :deliveryStatus="item.chat_historys[0].deliveryStatus"
           @click="{
-            cList.chiChatMsg = ''; // clear chat value from input box if the user didnt send
+            cList.chiChatMsg = ''; 
             cList.chiUnionUnderFocus = item.unionId;
             cList.chiUnionIdOther = item.unionIdOther;
             cList.chiMorphPartnerUserId = item.client2Id;
-            cList.chiMorphPartnerDp = item.client2.profile_pics[0].avatar;  // retrieve partner uprofile pic from current list view and use it in message view
+            cList.chiMorphPartnerDp = item.client2.profile_pics[0].avatar;  
             cList.chiMorphPartnerUName = item.client2.userName;
             cList.chiMorphPartnerName = item.client2.name;
             cList.chiMorphPartnerEmail = item.client2.email;
@@ -297,7 +243,6 @@
       <div v-if='!cList.chiChatConnsApiOk' class="Awaiting-chat-list"></div>
     </div>
 
-        
     <div class="Single-conversation Output-box" :class="{clActive: vtofctc.SingleConversationIsActive}"
       @click="setSeen(cList.chiUnionUnderFocus, cList.chiUnionIdOther as number)">
       <div v-if='cList.chiUnionUnderFocus'>
@@ -316,7 +261,7 @@
                 } else {
                   styling.TopOfChatUlHeight='120px';
                 }
-                // reset 'delete conversation' confirmation
+
                 styling.DeleteConvLiDisplay='block';
                 styling.ConfirmDeleteLiDisplay='none';
               }">:::
@@ -324,9 +269,9 @@
           </div>
           <ul class="Top-of-chat-ul">
             <li class="Top-of-chat-li" v-if='cList.chiMorphBlockStatus === false' @click="{
-                // hide the dropdown options
+
                 styling.TopOfChatUlHeight='0px';
-                // goto the profile of this user we're viewing their conversation
+
                 cactc('Their-profile'); 
               }
               ">{{cList.chiMorphPartnerUName}}'s Profile
@@ -338,16 +283,16 @@
             </li>
             <li class="Top-of-chat-li Confirm-delete-li">
               <button class="Confirm-delete-li-yes" @click="{
-                  // call deleting function, 
+
                   deleteConversation(cList.chiUnionUnderFocus);
-                  // hide the dropdown options
+
                   styling.TopOfChatUlHeight='0px';
-                  // navigate back to chat list view
+
                   cactc('Chats-list');
                 }">Confirm
               </button>
               <button class="Confirm-delete-li-no" @click="{
-                  // switch the li back to 'delete conversation'
+
                   styling.DeleteConvLiDisplay='block';
                   styling.ConfirmDeleteLiDisplay='none';
                 }">Back
@@ -355,9 +300,9 @@
             </li>
           </ul>
         </div>
-          
+
         <div id="bodyOfChats" class="bodyOfChat" :key='chatCache[cList.chiUnionUnderFocus]' v-if='chatCache[cList.chiUnionUnderFocus]'>
-          <MessageItem v-for='(item, index) in chatCache[cList.chiUnionUnderFocus]'
+          <ChatListItemMsg v-for='(item, index) in chatCache[cList.chiUnionUnderFocus]'
             :incoming="item.incoming"
             :outgoing="item.outgoing" 
             :time="item.time"
@@ -374,9 +319,9 @@
             <img src="/khrov-chat-media/unblock.png" alt="Unblock">
             <span @click="{
                 blockUnblock($_, cList.chiMorphPartnerUserId, cList.chiMorphPartnerUName, false);
-                // hide the dropdown options
+
                 styling.TopOfChatUlHeight='0px';
-                // Go back to Chat-list
+
                 cactc('Chats-list');
               }">Unblock {{cList.chiMorphPartnerUName}}</span>
           </button>
@@ -394,9 +339,9 @@
         <div class="Their-profile-output">
           <p>
             <span class="Profile-back-btn" @click="{ 
-                // close list tab if opened by hamburger
+
                 styling.ProfileUlHeight='0px';
-                // go back to conversation
+
                 cactc('Single-conversation');
               }">&#11164;
             </span>
@@ -409,13 +354,13 @@
               } else {
                 styling.ProfileUlHeight='40px';
               }
-            
+
               }">:::
             </span>
             <ul class="Profile-item-ul">
               <li class="Profile-item-li" @click="{
                   layer.msg('This is a Todo. Depending on the implementation of Game');
-                  // Close list tab afterwards
+
                   styling.ProfileUlHeight='0px';
                 }">
                 Game Invite {{cList.chiMorphPartnerUName}}
@@ -442,11 +387,11 @@
             <span class="Confirm-blocking-yes" @click="{
             styling.DisplayBlockingConfirm='none';
             styling.DisplayBlockingQuestion='block';
-            // block them
+
             blockUnblock($_, cList.chiMorphPartnerUserId, cList.chiMorphPartnerUName, true);
-            // hide the dropdown options
+
             styling.TopOfChatUlHeight='0px';
-            // Go back to Chat-list
+
             cactc('Chats-list');
             }">Confirm</span>
             <span class="Confirm-blocking-no" @click="{
@@ -485,8 +430,9 @@
   height: 100%;
   background-image: url(/khrov-chat-media/awaitingApi.gif);
   background-repeat: no-repeat;
-  background-size: contain;
-  /*  */
+  background-size: 30%;
+  background-position: center;
+
 }
 
 .Single-conversation {
@@ -494,7 +440,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  
+
 }
 .Top-of-chat {
   display: block;
@@ -517,11 +463,10 @@
   overflow-y: scroll;
   border-radius: 10px;
 
-  /* Hide scrollbar for IE, Edge and Firefox */
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;  
+  scrollbar-width: none;  
 }
-/* Hide scrollbar for Chrome, Safari and Opera */
+
 .bodyOfChat::-webkit-scrollbar {
   display: none;
 }
@@ -538,12 +483,12 @@
   display: grid;
   grid-template-columns: 10% 20% 60% 10%;
   grid-template-rows: 36px;
-  
+
   width: 100%;
   height: 36px;
   padding: 3px 4px 0;
   position: relative;
-  
+
 }
 .Union-back-btn {
   display: block;
@@ -604,7 +549,7 @@
   padding: 0 2px; 
   -webkit-transition: height 0.5s;
   transition: height 0.5s;
-  
+
 }
 .Top-of-chat-li {
   display: block;
@@ -653,9 +598,6 @@ button.Confirm-delete-li-yes {
 button.Confirm-delete-li-no {
   background-color: #1C39BB;
 }
-
-
-
 
 .Union-send-msg {
   display: grid;
@@ -742,7 +684,7 @@ button.Confirm-delete-li-no {
 }
 .Their-profile-output > * {
   display: block;
-  /* overflow: hidden; */
+
   margin: 10px auto;
   padding: 10px;
 }
@@ -756,10 +698,10 @@ button.Confirm-delete-li-no {
   box-shadow: 0 0 5px #73C2FB;
 }
 .Their-profile-output > *:nth-child(2) {
-  /* display: block; */
+
   background-color: #d7e1ec;
   box-shadow: 0 0 5px #73C2FB;
-  /* margin-bottom: 100px; */
+
 }
 
 .Profile-back-btn, .Profile-name, .Profile-hamburger-icon {
@@ -868,7 +810,7 @@ button.Confirm-delete-li-no {
 }
 .Their-profile-details.Block {
   display: v-bind('styling.DisplayBlockingQuestion');
-  cursor: pointer;   /* new line */
+  cursor: pointer;   
 }
 .Their-profile-details.Block-confirm {
   display: v-bind('styling.DisplayBlockingConfirm');
@@ -895,6 +837,5 @@ button.Confirm-delete-li-no {
   background-color: #1C39BB;
   border-bottom-right-radius: 10px;
 }
-/* <!--//here--> */
 
 </style>

@@ -11,7 +11,7 @@
   } >()
 
   const $HOST = inject('$HOST');
-  // const layer = require('@layui/layer-vue');
+
   const ciItem: ChatInviteItem = reactive({
     ciiBlockPanelHeight: '0px',
     ciiMsgPanelHeight: '0px',
@@ -29,7 +29,7 @@
       'msg': ciItem.ciiMsgInput,
     }
 
-    fetch(`${$HOST}/chat-history`, {
+    fetch(`${$HOST}/chats`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,22 +42,21 @@
         layer.msg('Message could not be sent');
         throw response;
       }
-      // clear the input from user view
+
       ciItem.ciiMsgInput = '';
-      // hide the message panel if open
+
       ciItem.ciiMsgPanelHeight='0px';
       layer.msg('Message sent Successfully');
     })
   }
 
-  // simply block the user 
   const blockUser = (blocker: number, blocked: number, partner: string) => {
     const tmp = {
       'blockerId': blocker,
       'blockedId': blocked,
     }
 
-    fetch(`${$HOST}/chat-blocking/true`, {
+    fetch(`${$HOST}/chats/block/user`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -81,9 +80,9 @@
       <img :src="profileDp" alt="Avatar" />
       <span>{{displayName}}</span>
       <img src="/khrov-chat-media/chat.png" alt="Message" @click="{
-                                              // first hide the block panel if open
+
                                               ciItem.ciiBlockPanelHeight='0px';
-                                              // Now toggle
+
                                               if (ciItem.ciiMsgPanelHeight==='0px'){
                                                 ciItem.ciiMsgPanelHeight='25px';
                                               } else {
@@ -91,9 +90,9 @@
                                               }
                                             }" />
       <img src="/khrov-chat-media/block.png" alt="Block" @click="{
-                                              // first hide the message panel if open
+
                                               ciItem.ciiMsgPanelHeight='0px';
-                                              // Now toggle
+
                                               if (ciItem.ciiBlockPanelHeight==='0px') {
                                                 ciItem.ciiBlockPanelHeight='25px';
                                               } else {
@@ -118,7 +117,6 @@
 #Chat-invite-item {
   position: relative;
 }
-
 .User-preview {
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr;
@@ -127,13 +125,15 @@
   height: 50px;
   padding: 5px;
   position: relative;
+  background-color: rgb(245, 245, 245);
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
 }
 .User-preview > * {
   padding: 5px;
-  
 }
 .User-preview:hover {
-  background-color: rgb(245, 245, 245);
+  background-color: #F5F5DC;
 }
 .User-preview >:nth-child(1) {
   position: relative;
@@ -173,9 +173,9 @@
   height: v-bind('ciItem.ciiMsgPanelHeight');
   overflow: hidden;
   position: absolute;
-  bottom: -10px;
+  bottom: -5px;
   right: 60px;
-  
+
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
 }
@@ -198,7 +198,7 @@
   height: v-bind('ciItem.ciiBlockPanelHeight');
   overflow: hidden;
   position: absolute;
-  bottom: -8px;
+  bottom: -1px;
   right: 0;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;

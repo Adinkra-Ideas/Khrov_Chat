@@ -35,6 +35,24 @@ async function bootstrapUsers() {
         avatar: avatar,
       }
     });
+    const delayChannel = await prisma.channel.create({
+      data: {
+        name: key + 'Channel',
+        desc: key + ' owns this Channel',
+        visibility: 'public',
+      },
+      select: {
+        id: true,
+      }
+    });
+    const delayChannel2 = await prisma.channel_link.create({
+      data: {
+        chId: delayChannel.id,
+        userId: delayer.id,
+        role: 'owner',
+        linkStatus: 'good'
+      },
+    });
   }
 
 }

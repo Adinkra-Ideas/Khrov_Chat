@@ -3,7 +3,7 @@
 
 <template>
   <div id="Icon-container">
-    <span id="Chat-count">+9</span>
+    <p class="Chat-count">+N</p>
     <img id="Chat-icon" alt="Chat Icon" src="/khrov-chat-media/chat-icon.svg"  />
   </div>
 </template>
@@ -21,7 +21,7 @@
   height: 58px;
 }
 
-#Chat-count {
+.Chat-count {
   position: absolute;
   right: 0;
   top: -5px;

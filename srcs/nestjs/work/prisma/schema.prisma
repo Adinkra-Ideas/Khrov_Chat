@@ -25,16 +25,16 @@ model User {
   profile_pics       Profile_pic[]
   chat_union1        Chat_union[]       @relation("Client1")
   chat_union2        Chat_union[]       @relation("Client2")
+  channel_links      Channel_link[]
+  channel_historys   Channel_history[]
+  channel_pendings   Channel_pending[]
 }
 
-// Child of User Table used for storing user profile pics 1to1
 model Profile_pic {
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId       Int        @id
   avatar       String     @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFwAAABcCAMAAADUMSJqAAAAOVBMVEXv7OjGw70AAADCv7ry7+v49fHm49/g3dns6eXMycR4dnTPzMekop9WVVTKx8QYFxcyMjG8ubPY1dHE2mloAAACUklEQVRoge2a25KDIAyGoUbR4qHl/R92Aa21HQmYhJud/jd79zXzb8hhorptmsbZ9Iqt3szj9GKq9c/dtAB8dBBAa+4H+GJbIfLGb+3ygj86UXTEd48VvsizA32JcFuB7ek2wO9tDbZS7d3DTZXAfejmpqZKgfvQJzVWCtyHPqq5HnxWphZbebRAPUnpChpC9QGpEvRBVp2zVmtrXadk+dDZptGbmsYKFgwweidvfC329OwXOuKtBBm6E3TE871JsiXoaXag89g9wvZ01guEAWNrPTCMAYMG7kNnZCRk2J5OhoPLsbV2VDrk2VpT4Vga7r4Q07HEFbIvuTxcRczGfK5EX4imP0vgTxr7Bz9V1X9o0QOlPlGwJWzqdJ8ruNEV6jiIt6ENTm1GJe+f3ovyZZHRo/Ohc5poznVW+weHjxbkJrfSUWM4pkTNafbMI/s1ok/De8VYM6Bzw/dk/mF5MzjaMArKYeD9B7QjbDFFrX+Vuxi2KUcHXRoZzxYV1JwLS0zRwPKpoRBdUmlPgi+qBDR2IZ2GDsqiywbEc+VKTaYM4soVSarhGx21nWNKEGpMyS6Bho60VG7gaOjcwLHQy5YgXOmE4bPTL4mXh6uS2XixiJ8rMZhKWJ40nZ+IQYlkLFtTckqsMXXhEuzkjiQT+Tn7B/8X8L4evD8eRKTh5njKEYbDfDxCScPH4/lMGN5Ox8OfLDwc/g4nS1l4PFm+j62i8PXY+j4TS8JfZ+L9wC0I3w/cPvYhnubF4NAOy/dHBUJt7uujgu1ziKfEUPQ8fA7xB92pGr+J4j6kAAAAAElFTkSuQmCC")
 }
-
-// Table for storing chat union details between two User
 model Chat_union { 
   unionId                 Int       @default(autoincrement()) @id  
   unionIdOther            Int        
@@ -49,9 +49,6 @@ model Chat_union {
   updatedAt               DateTime  @updatedAt
   chat_historys           Chat_history[]
 }
-
-
-// Table where the chat between two people are stored
 model Chat_history {
   id                Int                 @default(autoincrement()) @id
   union             Chat_union          @relation(fields: [unionId], references: [unionId], onDelete: Cascade, onUpdate: Cascade)
@@ -60,4 +57,46 @@ model Chat_history {
   incoming          String?
   time              DateTime            @default(now())
   deliveryStatus    String              @default("sent") @db.VarChar(16)
+}
+model Channel {
+  id                Int                 @default(autoincrement()) @id
+  name              String              @db.VarChar(32) @unique
+  desc              String              @db.VarChar(128)
+  visibility        String              @db.VarChar(16)
+  password          String?             @db.VarChar(128)  // this is assuming the question mark will allow us use this table as a type if we exclude password frm the db return 
+  channel_links     Channel_link[]
+  channel_historys  Channel_history[]
+  channel_pendings  Channel_pending[]
+}
+model Channel_link {
+  id                Int                 @default(autoincrement()) @id
+  ch                Channel             @relation(fields: [chId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chId              Int
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)    
+  userId            Int
+  role              String              @db.VarChar(16)
+  linkStatus        String              @db.VarChar(16)
+  mutedUntil        DateTime?
+  unreadCount       Int                 @default(0)
+  updatedAt         DateTime            @updatedAt
+  channel_historys  Channel_history[]
+}
+model Channel_history {
+  id                Int                 @default(autoincrement()) @id
+  ch                Channel             @relation(fields: [chId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chId              Int
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)    
+  userId            Int
+  outgoing          String
+  deliveryStatus    String              @db.VarChar(8) @default("sent")
+  createdAt         DateTime            @default(now())
+  channel_links     Channel_link[]
+}
+model Channel_pending {
+  id                Int                 @default(autoincrement()) @id
+  ch                Channel             @relation(fields: [chId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  chId              Int
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)    
+  userId            Int
+  createdAt         DateTime            @default(now())
 }

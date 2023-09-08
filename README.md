@@ -37,6 +37,9 @@ On successful completion, you should see the following:
 > 
 > ✔ Container nestj        Started 
 
+IMPORTANT: If for some reason, the initial run failed, or you need to repeat the process a second time, you must check inside the path srcs/postgres/ to see if a directory named 'postgre' (without the quotes) has been created. If yes, you mest delete this directory (srcs/postgres/postgre) before repeating the 'make up' command. Failure to do this might prevent the execution of the Prisma seed which is supposed to create fake users and channels for initial tests.
+
+
 6. Three Docker containers will be created. Adminer, Nestjs and Postgres. Ignore those if you dont know what they mean. Upon startup, the Database will be populated with test users but you must wait for about a minute for the Nestjs underlying server to be fully ready, then open your browser and visit localhost:3000
 
 Hint: If the webpage says 'ERR_EMPTY_RESPONSE' and your browser console shows error 
@@ -60,7 +63,10 @@ Collaborators are welcome. More details will be given in due time as this Chat i
 
 The primary tools used are Nestjs, Vue, Prisma, Postgres, Docker(for containerization)
 
-## Additional Info
+## Additional Info for Developers
 
+All API Endpoints have been Documented and made available on the Swagger Module interface
+
+## Credit
 - Author - [Daniel Uyi](https://khrov.com)
 - License - [MIT licensed](LICENSE).

@@ -3,7 +3,6 @@
   import type { PropType } from 'vue'
   import type { ChatBlockedItem } from '@/components/khrov-chat/interface/khrov-chat'
   import { layer } from '@layui/layer-vue';
-  // const layer = require('@layui/layer-vue');
   const props =  defineProps< {
     myId: number,
     theirId: number,
@@ -16,15 +15,13 @@
     cbiBlockPanelHeight: '0px',
   });
 
-  // CONTINUE FROM HERE
-  // simply unblock the user 
   const unblockUser = (blocker: number, blocked: number, partner: string) => {
     const tmp = {
       'blockerId': blocker,
       'blockedId': blocked,
     }
 
-    fetch(`${$HOST}/chat-blocking`, {
+    fetch(`${$HOST}/chats/block/user/unblock`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -124,7 +121,7 @@
   height: v-bind('cbItem.cbiBlockPanelHeight');
   overflow: hidden;
   position: absolute;
-  bottom: -8px;
+  bottom: -2px;
   right: 0;
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
