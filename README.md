@@ -1,6 +1,15 @@
 # Khrov Chat App
-Test version of the App Boilerplate for my upcoming Social Media Platform currently in its development Phase.
-Live preview will be made available for testing and feedback on my website https://khrov.com in due time
+A simple online connection chat where you can meet and interact with people the World over.
+
+# Dev Tools
+  ## Backend
+  Nest.js (Typescript, Jest, PrismaORM with Postgresql, SwaggerApi, JWT with Google OAuth2 Provider, etc)
+  ## Frontend
+  Vue.js (Vue3<script setup>, Typescript, Pinia, Vitest, etc)
+  ## Deployment
+  See a live usage of the code upgraded to an SSR/SSG (Quasar Vue) in the Official Khrov Chat website https://khrovchat.com
+  Deployment service: AWS
+
 
 # Legals
 This App is provided as is with no Guarantee whatsoever. Cloning, testing or whatever you chose to do with it is at your own risk. I will not be held liable for any damages, losses or misfortune that may arise due to your usage. By cloning from this Github repo, you are agreeing to the aforementioned Terms.
@@ -10,9 +19,9 @@ This App is provided as is with no Guarantee whatsoever. Cloning, testing or wha
 ```bash
 git clone https://github.com/Adinkra-Ideas/khrov-chat.git && cd khrov-chat
 ```
-2. Run the following command to rename the file named './srcs/dotenv' to './srcs/.env' without the quotes
+2. Run the following command to rename the file named 'dotenv' to '.env' without the quotes
 ```bash
-mv ./srcs/dotenv ./srcs/.env
+mv ./dotenv ./.env
 ```
 3. Free ports 5432, 8080 and 3000 on your local machine by shutting down any Process that is using them
 ```bash
@@ -50,24 +59,7 @@ Hint: If the webpage says 'ERR_EMPTY_RESPONSE' and your browser console shows er
 It simply means the Nestjs service is not yet fully up. Depending on your Machine's capability, it might take up to 5 minutes or more. Keep reloading the page.
 
 
-7. I removed the 0Auth part of the App, meaning the current version is not behind any Session. But a 'fake Session' was created for the test. At the bottom right of the loaded webpage on your Browser'S screen, enter any of the existing userId from the 10 users currently in your 'User' table of Postgres, so you can use the chat as if you were that User. Yes, you can do this on multiple tabs with different userIds simultaneously. To start a new chat, simply open the chat interface and under the 'Chat Invite' tab, you can search for users by their name, userName or displayName in the 'User' table of the Postgres Db.
-
-Hint: Adminer container. The logins for the DB are in the .env file.
-
-- Supports unlimited chat with realtime delivery status updates, blocking and unblocking(check the 'Blocked' tab to find users you blocked, if you need to unblock them), and a whole lot more.
-
-# Chat Todo's
-- Adding the channels/Group chat support
-- Better UI/UX improvements for the frontview
-- Notifications, Date formating, ...
-
-Collaborators are welcome. More details will be given in due time as this Chat interface is only a small part of a bigger personal project that I am currently working on. 
-
-The primary tools used are Nestjs, Vue, Prisma, Postgres, Docker(for containerization)
-
-## Additional Info for Developers
-
-All API Endpoints have been Documented and made available on the Swagger Module interface
+Collaborators are welcome.  
 
 ## Credit
 - Author - [Daniel Uyi](https://khrov.com)

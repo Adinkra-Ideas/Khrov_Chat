@@ -1,1 +1,0 @@
-import{_ as e,o as _,c as t}from"./index-a807770e.js";const c={},a={id:"ChatyView"};function o(s,n){return _(),t("div",a)}const d=e(c,[["render",o],["__scopeId","data-v-ac7614ba"]]);export{d as default};
