@@ -3,9 +3,9 @@ A simple online connection chat where you can meet and interact with people the 
 
 # Dev Tools
   ## Backend
-  Nestjs(Typescript), Jest, PrismaORM with Postgresql, SwaggerApi, JWT with Google OAuth2 Provider, Websocket(server), etc.
+  Nestjs(Typescript), Jest testing, PrismaORM with Postgresql, SwaggerApi, JWT with Google OAuth2 Provider, Websocket(server), etc.
   ## Frontend
-  Vue.js(Vue3<script setup> Typescript), Pinia, Vitest, Cypress, Websocket(client), etc.
+  Vue.js(Vue3<script setup> Typescript), Pinia, Vitest unit testing, Cypress E2E testing, Websocket(client), etc.
   ## Deployment
   See a live usage of the code upgraded to an SSR/SSG (Quasar Vue) in the Official Khrov Chat website https://khrovchat.com
   Deployment service: AWS
