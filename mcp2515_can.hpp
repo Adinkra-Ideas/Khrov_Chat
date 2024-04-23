@@ -266,7 +266,7 @@ public:
   /*************************************/ 
   
   /************  methods  **************/   
-  void init_CS(uint8_t SPICS);
+  void init_CS(uint8_t SPICS); 
 
   uint8_t begin(uint32_t speedset,
                   const uint8_t mosi_pin,
