@@ -265,7 +265,7 @@ public:
 
   /*************************************/ 
   
-  /************  methods  **************/ 
+  /************  methods  **************/  
   void init_CS(uint8_t SPICS);
 
   uint8_t begin(uint32_t speedset,
