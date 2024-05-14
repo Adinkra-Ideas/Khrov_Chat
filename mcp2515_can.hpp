@@ -258,7 +258,7 @@ typedef enum {
 class mcp2515_can {
 public:
   mcp2515_can(uint8_t SPICS);
-
+ 
   /************* Setters ***************/
   void  setSPI(SpiClass *_pSPI);  // define SPI port to use before begin() (I BELIEVE HERE IS WHERE WE SET THE OTHER 3 PINOUTS)
   // well the SpiClass doesn't even have a constructor defined. Which means, upon instantiation, just an empty object is received
