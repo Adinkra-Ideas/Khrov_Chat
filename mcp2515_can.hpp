@@ -263,7 +263,7 @@ public:
   void  setSPI(SpiClass *_pSPI);  // define SPI port to use before begin() (I BELIEVE HERE IS WHERE WE SET THE OTHER 3 PINOUTS)
   // well the SpiClass doesn't even have a constructor defined. Which means, upon instantiation, just an empty object is received
 
-  /*************************************/
+  /*************************************/ 
 
   /************  methods  **************/
   void init_CS(uint8_t SPICS);
